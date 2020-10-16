@@ -22,9 +22,15 @@ post_list = [
 def home(request):
     # Mediante la llave post list voy a acceder a un objeto python
     # Que en este caso es una lista de diccionarios
-    context = {'post_list': post_list}
+    context = {
+        'post_list': post_list
+
+    }
     return render(request, 'blog/home.html', context)
 
 
 def about(request):
-    return render(request, 'blog/about.html')
+    context = {
+        'title': 'About'
+    }
+    return render(request, 'blog/about.html', context)
