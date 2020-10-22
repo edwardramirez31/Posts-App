@@ -41,6 +41,17 @@
     <main role="main" class="container">
         <div class="row">
           <div class="col-md-8">
+            <!-- agregar los mensajes flash para que se vean en cualquier pg web -->
+            {% if messages %}
+            <!-- si hay mensajes flash se puede iterar a a través de estos -->
+              {% for message in messages %}
+              <!-- bootstrap tiene clases para mostrar alertas -->
+              <!-- el nombre de las alertas de bootstrap es el mismo al de las alertas de Django, por tanto accedo al tipo de alerta del msg -->
+                <div class="alert alert-{{ message.tags }}">
+                  {{ message }} 
+                </div>
+              {% endfor %}
+            {% endif %}
             {% block content %}{% endblock %}
           </div>
           <div class="col-md-4">
