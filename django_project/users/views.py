@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm
+# from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
+from .forms import UserRegisterForm
 # Create your views here.
 
 
@@ -8,10 +9,12 @@ def register(request):
     if request.method == "POST":
         # Si es POST, voy a validar los datos
         # Crear un form con los datos de la peticion
-        form = UserCreationForm(request.POST)
+        form = UserRegisterForm(request.POST)
         # Los datos de la peticion puede ser cualquier cosa
         # Por tanto se va a validar que se obtienen los datos deseados
         if form.is_valid():
+            # guardar el usuario
+            form.save()
             # obtener el nombre de usuario que se obtuvo
             # los datos validados del form van a estar en el diccionario
             # cleaned_Data
@@ -25,5 +28,5 @@ def register(request):
             return redirect('blog:blog-home')
     else:
         # Blank form
-        form = UserCreationForm()
-        return render(request, 'users/register.html', {'form': form})
+        form = UserRegisterForm()
+    return render(request, 'users/register.html', {'form': form})
