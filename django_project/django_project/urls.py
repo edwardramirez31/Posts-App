@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from users import views as users_views
 # from users import views as users_views
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -22,5 +23,6 @@ urlpatterns = [
     # quito el path y dejo vacio tanto acá como en blog.urls
     # path('blog/', include('blog.urls')),
     path('', include('blog.urls')),
+    path('register', users_views.Register.as_view(), name='register'),
     # path('register', users_views.register, name='register'),
 ]
