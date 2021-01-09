@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -125,5 +125,9 @@ STATIC_URL = '/static/'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_REDIRECT_URL = '/'
-
 LOGIN_URL = '/login'
+# full path to the directory where the files will be saved
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# public url of that Media root directory
+# como se accede a la imagen desde el browser
+MEDIA_URL = '/media/'
