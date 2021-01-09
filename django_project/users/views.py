@@ -19,3 +19,10 @@ class Register(View):
         messages.success(request, f'Account created for {username}. Please, Log in')
         form.save()
         return redirect('blog:home')
+
+
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def profile(request):
+    return render(request, 'users/profile.html')
