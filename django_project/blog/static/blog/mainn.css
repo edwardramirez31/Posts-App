@@ -5,16 +5,26 @@ body {
     margin-top: 5rem;
     }
 
+.article-title {
+    color: #444444;
+    }
+    
+a.article-title:hover {
+color: #428bca;
+}
 
+.article-content {
+white-space: pre-line;
+}
 .card a {
     text-decoration: none;
 }
 .content-section {
     border: 1px solid #ddd;
     background-color: #fff;
-  border-radius: 3px;
-  margin-bottom: 20px;
-  padding: 20px 20px;
+    border-radius: 3px;
+    margin-bottom: 20px;
+    padding: 20px 20px;
 
 }
 

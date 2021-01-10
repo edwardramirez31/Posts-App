@@ -1,0 +1,14 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+<section class="content-section">
+    <h2 class="border-bottom">Delete Post</h2>
+    <p class="lead">Are you sure you want to delete: <span style="font-style: italic; font-weight: bold;">{{ post.title }}</span>?</p>
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <button type="submit" class="btn btn-outline-danger">Yes, delete.</button>
+            <input type="button" value="Cancel" class="btn btn-outline-primary" onclick="window.location='{% url 'blog:home' %}'; return false;">
+        </div>
+    </form>
+</section>
+{% endblock %}

@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.views import View
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from .models import Post
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -42,6 +42,15 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
     fields = ['title', 'content']
     template_name = "blog/form.html"
+    success_url = reverse_lazy('blog:home')
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(author=self.request.user)
+
+class PostDeleteView(LoginRequiredMixin, DeleteView):
+    model = Post
+    template_name = "blog/delete.html"
     success_url = reverse_lazy('blog:home')
 
     def get_queryset(self):
