@@ -1,7 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib import messages
+from django.contrib.auth.models import User
 # Create your views here.
 class Register(View):
     def get(self, request):
@@ -24,7 +25,8 @@ class Register(View):
 from django.contrib.auth.decorators import login_required
 
 @login_required
-def profile(request):
+def profile(request, pk):
+    profile = get_object_or_404(User, pk=pk)
     if request.method == 'POST':
         user_form = UserUpdateForm(request.POST, instance=request.user)
         profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
@@ -32,11 +34,11 @@ def profile(request):
             user_form.save()
             profile_form.save()
             messages.success(request, f'Your profile has been updated.')
-            return redirect('profile')
+            return redirect('blog:home')
     else:
         user_form = UserUpdateForm(instance=request.user)
         profile_form = ProfileUpdateForm(instance=request.user.profile)
-    context = {"user_form": user_form, "profile_form": profile_form}
+    context = {"user_form": user_form, "profile_form": profile_form, "user_": profile}
     return render(request, 'users/profile.html', context)
 
 # This method creates and saves a database object from the data bound to the form. A subclass of ModelForm can accept an existing model instance as the keyword argument instance; if this is supplied, save() will update that instance. If it’s not supplied, save() will create a new instance of the specified model:

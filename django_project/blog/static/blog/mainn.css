@@ -1,16 +1,12 @@
 
 body {
-    background: #fafafa;
+    background: #fbfbfb;
     color: #333333;
     margin-top: 5rem;
     }
 
 
-.card {
-    margin-bottom: 10px;
-}
-
-.card-header a {
+.card a {
     text-decoration: none;
 }
 .content-section {
@@ -29,7 +25,12 @@ body {
     margin-bottom: 16px;
 }
 
-.account-heading {
-    font-size: 100px;
+.article-img {
+    height: 50px;
+    width: 50px;
+    margin-right: 16px;
 }
-  
+.account-heading {
+    font-size: 2.5rem;
+    color: #333333
+}

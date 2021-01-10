@@ -6,7 +6,7 @@
     <header class="card-header d-flex align-items-center">
     <img src="{{ post.author.profile.image.url }}" alt="{{ post.author }} Profile Pic" class="rounded-circle article-img">
         <div>
-        <a href="{% url 'profile' post.author.id %}">{{post.author.username}}</a><br> <smal class="text-muted">{{ post.updated_at|naturaltime }}</smal>
+        <a href="{% url 'profile' post.author.id %}">{{post.author.username}}</a><br> <small class="text-muted">{{ post.updated_at|naturaltime }}</small>
         </div>
     {% if user == post.author %}
     <div class="ms-auto">
