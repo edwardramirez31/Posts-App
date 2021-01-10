@@ -2,7 +2,12 @@ from django.shortcuts import render
 from django.views import View
 from .models import Post
 from django.db.models import Q
-# Create your views here.
+# ? ! * TODO Create your views here.
+# TODO extensions to use:
+# * Duplicate action
+# * Better comments
+# * profile switcher
+# * Settings Sync
 
 def HomeView(request):
     searchValue = request.GET.get('search', False)
