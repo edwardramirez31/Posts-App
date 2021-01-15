@@ -14,6 +14,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     comments = models.ManyToManyField(
         User, through='Comment', related_name='posts_comments')
+    favs = models.ManyToManyField(User, through='Favorite', related_name='all_favs')
 
     def __str__(self):
         return self.title
@@ -34,3 +35,13 @@ class Comment(models.Model):
             return self.text[:15]
         else:
             return self.text
+
+class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorites')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='all_favorites')
+
+    class Meta:
+        unique_together = ('user', 'post')
+
+    def __str__(self):
+        return f'{self.user.username} favs {self.post}'
