@@ -1,4 +1,5 @@
 {% extends 'blog/base.html' %}
+{% load static %}
 {% load humanize %}
 {% block content %}
 
@@ -9,6 +10,7 @@
     <div>
       <a href="{% url 'profile' post.author.id %}">{{post.author.username}}</a><br> <small class="text-muted">{{ post.updated_at|naturaltime }}</small>
     </div>
+    {% if user.is_authenticated %}
     <div class="dropdown ms-auto">
       <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
       <div class="dropdown-menu bg-dark" aria-labelledby="dropdownMenuButton">
@@ -37,6 +39,7 @@
         {% endif %}
       </div>
     </div>
+    {% endif %}
   </header>
   {% if post.image %}
     <img src="{{ post.image.url }}" class="car-img-top img-fluid" alt="{{ post }} Pic"/>
@@ -48,45 +51,9 @@
   </div>
 </article>
 {% endfor %}
-<script type="text/javascript">
-    function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
+{% endblock %}
 
-    function sendPost(url) {
-      //const csrftoken = "{{ csrf_token }}";
-      const csrftoken = getCookie('csrftoken');
-      var xhttp = new XMLHttpRequest();
-      xhttp.open("POST", url, true);
-      xhttp.setRequestHeader("X-CSRFToken", csrftoken);
-      xhttp.send();
-    }
-    
-
-    function handleFavorites(url, url2, postID) {
-        var anchor = document.getElementById('fav-'+postID);
-        if (anchor.className.includes("btn-favorite")){
-          sendPost(url2);
-          anchor.classList.replace("btn-favorite", "btn-no-favorite");
-        } else {
-          sendPost(url);
-          anchor.classList.replace("btn-no-favorite", "btn-favorite");
-        }
-    }
-
-    
+{% block scripts %}
+<script type="text/javascript" src="{% static 'blog/scripts.js' %}">
 </script>
-
 {% endblock %}
