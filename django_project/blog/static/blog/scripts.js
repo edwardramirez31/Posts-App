@@ -35,13 +35,34 @@ function handleFavorites(url, url2, postID) {
 }
     
 function editComment(url, commentID) {
-    var ul = document.getElementsByClassName("list-group")[0];
-    var li = document.getElementById('comment-' + commentID);
-    var text = document.getElementById('comment-text-' + commentID).innerHTML;
+    var [ul, li, text] = getElements(commentID);
+
     var input = document.getElementById('id_text');
     input.value = text;
     ul.removeChild(li);
     // sending the post request
     var form = document.getElementsByTagName("form")[1];
     form.action = url;
+    //*Obtener el boton y cambiarle el tipo, agregarle un evento
+}
+function getElements(commentID) {
+    var ul = document.getElementsByClassName("list-group")[0];
+    var li = document.getElementById('comment-' + commentID);
+    var text = document.getElementById('comment-text-' + commentID).innerHTML;
+    return [ul, li, text];
+}
+
+function postAJAX(url, csrftoken) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open('POST', url, true);
+    xhttp.setRequestHeader("X-CSRFToken", csrftoken)
+    xhttp.send();
+    console.log(csrftoken)
+}
+
+function deleteComment(url, commentID, csrftoken) {
+    var [ul, li, ...rest] = getElements(commentID);
+    ul.removeChild(li);
+    postAJAX(url, csrftoken);
+    console.log(url);
 }
