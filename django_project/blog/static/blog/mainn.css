@@ -1,30 +1,41 @@
 
 body {
-    background: #fbfbfb;
+    /* background: #fbfbfb; */
+    background-color:#18191a;
     color: #333333;
     margin-top: 5rem;
     }
 
-.article-title {
-    color: #444444;
-    }
-    
-a.article-title:hover {
-color: #428bca;
+h1, h2, h3, h4, h5, h6 {
+    color: #e2e4e9;
 }
 
 .article-content {
 white-space: pre-line;
 }
-.card a {
+
+.card {
+    background:#242526;
+    color: white;
+}
+.card a, .comment-item a {
     text-decoration: none;
 }
+
+.article-title {
+    color: #e2e4e9;
+    }
+    
+.article-title:hover {
+color: #428bca;
+}
 .content-section {
-    border: 1px solid #ddd;
-    background-color: #fff;
+    /* border: 1px solid black; */
+    background: #242526;
     border-radius: 3px;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
     padding: 20px 20px;
+    color: #fff;
 
 }
 
@@ -42,5 +53,40 @@ white-space: pre-line;
 }
 .account-heading {
     font-size: 2.5rem;
-    color: #333333
+    color: #e2e4e9;
+}
+
+.comment-item {
+    background-color: #3a3b3c;
+}
+
+a.btn-favorite {
+    color: #ffbf00;
+    transition:color 0.5s ease-out;
+}
+a.btn-favorite:hover {
+    color: #aaaaaa;
+}
+
+a.btn-no-favorite {
+    color: #fff;
+    transition:color 0.5s ease-out;
+}
+a.btn-no-favorite:hover {
+    color: #ffbf00;
+    
+}
+
+.profile{
+    width: 55%;
+}
+
+.pic:hover {
+    opacity: 0.6;
+}
+
+.group{
+    /* overflow-x: hidden; */
+    overflow: auto;
+    height: 550px;
 }
