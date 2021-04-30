@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'blog.apps.BlogConfig',
     'crispy_forms',
+    'emoji_picker',
     'django.contrib.humanize',
     'django.contrib.admin',
     'django.contrib.auth',
