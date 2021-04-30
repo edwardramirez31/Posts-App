@@ -1,0 +1,52 @@
+{% extends 'blog/base.html'%}
+{% load static %}
+{% load crispy_forms_tags%}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.css" integrity="sha512-jO9KUHlvIF4MH/OTiio0aaueQrD38zlvFde9JoEA+AQaCNxIJoX4Kjse3sO2kqly84wc6aCtdm9BIUpYdvFYoA==" crossorigin="anonymous" />
+<link rel="stylesheet" href="{% static 'blog/croppie.css' %}">
+
+{% endblock head %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+    <div class="content-section">
+        <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    <legend class="mb-4 fw-bold">PROFILE INFO</legend>
+                    {{ user_form|crispy }}
+                    {{ profile_form|crispy }}<br>
+                </fieldset>
+                <div class="image-container mx-auto" style="max-width: 300px; height:auto; position:relative;">
+                  <img src="" id="myimg" class="img-fluid">
+                  <input type="hidden" name="x" id="x">
+                  <input type="hidden" name="y" id="y">
+                  <input type="hidden" name="width" id="width">
+                  <input type="hidden" name="height" id="height">
+                </div>
+                <div class="form-group mt-2">
+                    <button class="btn btn-primary col-12 fw-bold" type="submit">UPDATE</button>
+                </div>
+        </form>
+    </div>
+</div>
+<br>
+                    
+{% endblock content %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.js"
+        integrity="sha512-1bpfZkKJ+WlmJN/I2KLm79dSiuOos0ymwL5IovsUVARyzcaf9rSXsVO2Cdg4qlKNOQXh8fd1d0vKeY9Ru3bQDw=="
+        crossorigin="anonymous"></script>
+<script type="text/javascript" src="{% static 'blog/scripts.js' %}"></script>
+<script>
+  tinymce.init({
+    selector: "#id_presentation",
+    plugins: "emoticons",
+    toolbar: "emoticons",
+    toolbar_location: "bottom",
+    menubar: false
+  });
+</script> 
+{% endblock scripts %}

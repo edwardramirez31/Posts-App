@@ -1,0 +1,38 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+{% load user_info %}
+{% block content %}
+<div class="content-section col-md-6 m-auto">
+<h2 class="mb-4">Suggestions</h2>
+{% for user_ in users %}
+<div class="mb-3 d-flex align-items-center">
+    <img src="{{ user_.profile.image.url }}" alt="{{ user_ }} Profile Pic" class="rounded-circle article-img">
+    <div class="flex-fill d-flex justify-content-between align-items-center">
+    <div class="d-flex flex-column">
+        <span class="fw-bold">
+            <a href="{% url 'profile' user_.id %}" class="text-white text-decoration-none">{{user_.username}}</a>
+        </span>
+        <span class="small">
+            {{ user_.first_name }} {{ user_.last_name }}
+        </span>
+        <span class="text-muted small">
+            {{ user_|display_info:user }}
+        </span>
+    </div>
+    <a 
+        id="{{ user_.id }}"
+        class="badge btn-primary btn"
+        onclick="follow('{% url 'follow' user_.id %}','{% url 'un_follow' user_.id %}', {{ user_.id }});return false;"
+        >
+        Follow
+    </a>
+    </div>
+</div>
+{% endfor %}
+</div>
+{% endblock content %}
+
+
+{% block scripts %}
+<script type="text/javascript" src="{% static 'blog/scripts.js' %}"></script>
+{% endblock %}
