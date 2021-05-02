@@ -27,6 +27,7 @@ urlpatterns = [
     # quito el path y dejo vacio tanto acá como en blog.urls
     # path('blog/', include('blog.urls')),
     path('', include('blog.urls')),
+    path('chat/', include('chat.urls')),
     path('register/', users_views.Register.as_view(), name = 'register'),
     path('profile/<int:pk>', users_views.profile , name = 'profile'),
     path('profiles/', users_views.profiles , name = 'profiles'),
