@@ -3,5 +3,38 @@
 {% block content %}
 <div class="content-section">
 <h2>Room: {{ room }}</h2>
+<div id="content"></div>
+<form action="">
+<textarea id="chat-text" cols="80" rows="30"></textarea><br>
+    <input type="text" id="input" size="80"><br>
+    <input type="button" value="Send" id="submit">
+</form>
+
 </div>
+{{ room|json_script:"room-name" }}
+<script>
+var roomName = '{{ room }}';
+const username = '{{ user.username }}';
+let tag = document.getElementById('content');
+{% comment %} los slash son muy propensos a errores {% endcomment %}
+var socket = new WebSocket(`ws://${window.location.host}/ws/chat/${roomName}/`);
+
+socket.onmessage = function (event) {
+    console.log(event);
+    var data = JSON.parse(event.data);
+    tag.innerHTML = data.tester;
+    document.querySelector("#chat-text").value += `${data.username}: ${data.message} \n`
+}
+
+document.querySelector('#submit').onclick = (e) => {
+    const messageInput = document.getElementById('input');
+    socket.send(JSON.stringify({
+        "message": messageInput.value,
+        "user": username
+    }));
+
+    messageInput.value = '';
+
+}
+</script>
 {% endblock content %}

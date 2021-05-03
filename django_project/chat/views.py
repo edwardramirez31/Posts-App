@@ -4,8 +4,8 @@ from django.shortcuts import render
 def index(request):
     return render(request, 'chat/index.html')
 
-def room(request, pk):
-    room = pk
+def room(request, room_name):
+    room = room_name
     context = {
         'room': room
     }
