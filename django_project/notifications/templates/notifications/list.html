@@ -6,6 +6,7 @@
 <div class="content-section col-md-6 m-auto">
   <h2 class="mb-4">Notifications</h2>
   <div class=" infinite-container">
+    {% if page_obj %}
     {% for notification in page_obj %}
     <div class="infinite-item p-3 mb-2 list-group-item-action rounded {% if not notification.has_seen %}not-seen{%endif%}">
       <div class="d-flex align-items-center text-decoration-none">
@@ -25,6 +26,10 @@
       </div>
     </div>
     {% endfor %}
+    {% else %}
+    <p class="lead">You don't have new notifications
+    </p>
+    {% endif %}
   </div>
 </div>
 
