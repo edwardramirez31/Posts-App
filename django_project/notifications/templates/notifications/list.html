@@ -1,0 +1,60 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load user_info %}
+{% block content %}
+<div class="content-section col-md-6 m-auto">
+  <h2 class="mb-4">Notifications</h2>
+  <div class=" infinite-container">
+    {% for notification in page_obj %}
+    <div class="infinite-item p-3 list-group-item-action rounded">
+      <div class="d-flex align-items-center text-decoration-none">
+          <img src="{{ notification.sender.profile.image.url }}" alt="{{ user }} Profile Pic" class="rounded-circle article-img">
+          <div class="d-flex flex-column">
+            <a class="text-decoration-none text-primary" href="{{ notification.get_url }}">
+                {{ notification.text_preview }}
+            </a>
+            <div class="text-secondary">
+              {{ notification.date|naturaltime }}
+            </div>
+          </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% if page_obj.has_next %}
+<a class="infinite-more-link" href="?page={{ page_obj.next_page_number }}"></a>
+<div class="d-flex justify-content-center" style="display:none;">
+    <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+{% endif %}
+{% endblock content %}
+
+{% block scripts %}
+<script type="text/javascript" src="{% static 'blog/scripts.js' %}"></script>
+<script src="{% static 'blog/jquery.waypoints.min.js' %}"></script>
+<script src="{% static 'blog/infinite.min.js' %}"></script>
+<script>
+var infinite = new Waypoint.Infinite({
+        element: $('.infinite-container')[0],
+        handler: function(direction) {
+
+    },
+    offset: 'bottom-in-view',
+
+    onBeforePageLoad: function () {
+    $('.spinner-border').show();
+    $('.infinite-more-link').hide();
+    },
+    onAfterPageLoad: function () {
+    $('.spinner-border').hide();
+    }
+
+    });
+
+</script>
+{% endblock %}
