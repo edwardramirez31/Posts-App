@@ -28,6 +28,6 @@ def new_user(sender, instance, created, **kwargs):
                 "event": "New Follower",
                 "picture": instance.sender.profile.image.url,
                 "message": instance.text_preview,
-                "url": instance.get_url()
+                "url": reverse("notifications:mark", args=[instance.id])
             }
         )

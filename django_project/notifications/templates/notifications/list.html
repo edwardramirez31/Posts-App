@@ -7,17 +7,21 @@
   <h2 class="mb-4">Notifications</h2>
   <div class=" infinite-container">
     {% for notification in page_obj %}
-    <div class="infinite-item p-3 list-group-item-action rounded">
+    <div class="infinite-item p-3 mb-2 list-group-item-action rounded {% if not notification.has_seen %}not-seen{%endif%}">
       <div class="d-flex align-items-center text-decoration-none">
           <img src="{{ notification.sender.profile.image.url }}" alt="{{ user }} Profile Pic" class="rounded-circle article-img">
           <div class="d-flex flex-column">
-            <a class="text-decoration-none text-primary" href="{{ notification.get_url }}">
+            <a class="text-decoration-none text-primary" href="{% url 'notifications:mark' notification.id %}">
                 {{ notification.text_preview }}
             </a>
+            
             <div class="text-secondary">
               {{ notification.date|naturaltime }}
             </div>
           </div>
+          {% if not notification.has_seen %}
+            <div class="text-white fw-bold ms-auto">New!</div>
+          {%endif%}
       </div>
     </div>
     {% endfor %}
