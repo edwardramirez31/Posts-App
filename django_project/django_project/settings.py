@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     'crispy_forms',
     'channels',
-    'chat',
+    'chat.apps.ChatConfig',
     'notifications.apps.NotificationsConfig',
     'django.contrib.humanize',
     'django.contrib.admin',
