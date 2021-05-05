@@ -31,3 +31,13 @@ def display_info(user, current_user):
 
 
 register.filter('display_info', display_info)
+
+@register.inclusion_tag("blog/notifications.html", takes_context=True)
+def show_notifications(context):
+    user = context['request'].user
+    notifications = user.get_all_notifications.all().order_by('-date')
+    not_seen = len(notifications.filter(has_seen=False))
+    return {"notifications": notifications[:9], "not_seen": not_seen}
+
+
+# se hace debido a que no hay logica para una vista de solo la navbar

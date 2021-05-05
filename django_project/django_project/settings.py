@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'channels',
     'chat',
+    'notifications.apps.NotificationsConfig',
     'django.contrib.humanize',
     'django.contrib.admin',
     'django.contrib.auth',

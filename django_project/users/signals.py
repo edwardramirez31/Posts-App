@@ -1,8 +1,11 @@
-from django.db.models.signals import post_save, pre_save, post_delete
+from django.db.models.signals import post_save, pre_save, post_delete, m2m_changed
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from .models import Profile
 import os
+from notifications.models import Notification
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 @receiver(post_save, sender=User)
 def createProfile(sender, instance, created, **kwargs):
@@ -35,9 +38,17 @@ def file_update(sender, instance, raw, using, update_fields, **kwargs):
     """
     if instance.id is None:
         pass
-
     else:
         # current = instance
         previous = Profile.objects.get(id=instance.id)
         if not previous.image.path == instance.image.path:
             os.remove(previous.image.path)
+
+@receiver(m2m_changed, sender=Profile.following.through)
+def follow_update(sender, instance, action, pk_set, ** kwargs):
+    if action == "post_add":
+        user_sender = instance.user
+        user_receiver = User.objects.get(pk=pk_set.pop())
+        text = f"{user_sender} has followed you!"
+        notification = Notification(sender=user_sender, user=user_receiver, notification_type=3, text_preview=text)
+        notification.save()
