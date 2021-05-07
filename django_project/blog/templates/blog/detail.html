@@ -3,92 +3,88 @@
 {% load static %}
 {% load humanize %}
 {% block content %}
-<article class="card">
-    <header class="card-header d-flex align-items-center">
-    <img src="{{ post.author.profile.image.url }}" alt="{{ post.author }} Profile Pic" class="rounded-circle article-img">
-    <div id="author-profile">
-        <a href="{% url 'profile' post.author.id %}">{{post.author.username}}</a><br> 
-        <small class="text-muted">{{ post.updated_at|naturaltime }}</small>
-    </div>
-    {% if user.is_authenticated %}
-    <div class="dropdown ms-auto">
-        <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-        <div class="dropdown-menu bg-dark" aria-labelledby="dropdownMenuButton">
-        <a 
-        href="#" 
-        class="btn-{% if not post in user.all_favs.all %}no-{% endif %}favorite dropdown-item d-flex align-items-center"
-        id="fav-{{ post.id }}"
-        onclick="handleFavorites('{% url 'blog:fav' post.id %}', '{% url 'blog:unfav' post.id %}', {{ post.id }});return false;"
-        >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16" >
-            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
-            </svg><span class="ms-2">Fav</span>
-        </a>
-        {%if user == post.author %}
-          <a href="{% url 'blog:update' post.id %}" class="btn btn-outline-primary dropdown-item text-secondary">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
-              <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
-              </svg> Edit
-          </a>
-          <a href="{% url 'blog:delete' post.id %}" class="btn btn-outline-danger dropdown-item text-secondary">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-              <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-              </svg> Delete
-          </a> 
-        {% endif %}
-      </div>
-    </div>
-    {% endif %}
-    </header>
-    {% if post.image %}
-    <img src="{{ post.image.url }}" class="car-img-top img-fluid" alt="{{ post }} Pic"/>
-    {% endif %}
-    <div class="card-body">
-        <h2 class="card-title article-title"><a href=""></a> {{ post.title }}</h2>
-        <p class="card-text article-content">{{ post.content }}</p>
-    </div>
-</article>
-
-{% comment %} esto falta por analizar {% endcomment %}
-<div class="content-section mt-3">
-    <h3>Comment Section</h3>
-{% if comments %}
-    <ul class="list-group">
-    {%for comment in comments %}
-        <li class="list-group-item comment-item d-flex align-items-center mt-2" id="comment-{{ comment.id }}">
-        <img src="{{ comment.author.profile.image.url }}" alt="{{ comment.author }} Profile Pic" class="rounded-circle article-img align-self-start">
-        <div><a href="{% url 'profile' comment.author.id %}">{{comment.author.username}} </a><small class="text-muted">({{ comment.updated_at|naturaltime }})</small><br><span id="comment-text-{{ comment.id }}">{{ comment.text }}</span></div>
-        {% if comment.author == user %}
-        <div class="ms-auto flex-shrink-0 align-self-start p-0">
-            <a href="#" onclick="editComment('{% url 'blog:update_comment' comment.id %}', {{comment.id}}); return false;" class="btn btn-outline-primary p-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
-                <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
-                </svg>
+<div class="row">
+    <article class="card col-md-8 mx-auto">
+        <header class="card-header d-flex align-items-center">
+        <img src="{{ post.author.profile.image.url }}" alt="{{ post.author }} Profile Pic" class="rounded-circle article-img">
+        <div id="author-profile">
+            <a href="{% url 'profile' post.author.id %}">{{post.author.username}}</a><br> 
+            <small class="text-muted">{{ post.updated_at|naturaltime }}</small>
+        </div>
+        {% if user.is_authenticated %}
+        <div class="dropdown ms-auto">
+            <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+            <div class="dropdown-menu bg-dark" aria-labelledby="dropdownMenuButton">
+            <a 
+            href="#" 
+            class="btn-{% if not post in user.all_favs.all %}no-{% endif %}favorite dropdown-item d-flex align-items-center"
+            id="fav-{{ post.id }}"
+            onclick="handleFavorites('{% url 'blog:fav' post.id %}', '{% url 'blog:unfav' post.id %}', {{ post.id }});return false;"
+            >
+                <i class="fas fa-bookmark fa-lg me-2"></i>Save</span>
             </a>
-            <a href="#" class="btn btn-outline-danger p-1" onclick="deleteComment('{% url 'blog:delete_comment' comment.id %}', {{comment.id}}, '{{ csrf_token }}'); return false;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                </svg>
-            </a>
+            {%if user == post.author %}
+              <a href="{% url 'blog:update' post.id %}" class="btn btn-outline-primary dropdown-item text-secondary">
+                  <i class="fas fa-pen fa-lg"></i> Edit
+              </a>
+              <a href="{% url 'blog:delete' post.id %}" class="btn btn-outline-danger dropdown-item text-secondary">
+                  <i class="fas fa-trash-alt fa-lg"></i> Delete
+              </a> 
+            {% endif %}
+          </div>
         </div>
         {% endif %}
-        </li>
-    {% endfor %}
-    </ul>
-{% endif %}
-{% if user.is_authenticated %}
-    <form action="" method="post" class="d-flex mt-2">
-        {% csrf_token %}
-        <div class="flex-fill">
-        {{ comment_form|crispy }}
+        </header>
+        {% if post.image %}
+        <img src="{{ post.image.url }}" class="car-img-top img-fluid" alt="{{ post }} Pic"/>
+        {% endif %}
+        <div class="card-body">
+            <h2 class="card-title article-title"><a href=""></a> {{ post.title }}</h2>
+            <p class="card-text article-content">{{ post.content|safe }}</p>
         </div>
-        <button type="submit" class="btn btn-primary ms-2 align-self-end">Submit</button>
-        <a href="{% url 'blog:detail' post.id %}" class="btn btn-outline-light ms-2 align-self-end">Cancel</a>
-    </form>
-{% endif %}
+    </article>
+    
+    {% comment %} esto falta por analizar {% endcomment %}
+    <div class="col-md-4 mx-auto">
+        <div class="content-section h-100 d-flex flex-column justify-content-between">
+        <div>
+            <h3>Comment Section</h3>
+                {% if comments %}
+                <div class="list-group group">
+            
+                {% for comment in comments %}
+                    <div class="list-group-item comment-item d-flex align-items-center mt-2 infinite-item" id="comment-{{ comment.id }}">
+                    <img src="{{ comment.author.profile.image.url }}" alt="{{ comment.author }} Profile Pic" class="rounded-circle article-img align-self-start">
+                    <div><a href="{% url 'profile' comment.author.id %}">{{comment.author.username}} </a><small class="text-muted">({{ comment.updated_at|naturaltime }})</small><br><span id="comment-text-{{ comment.id }}">{{ comment.text }}</span></div>
+                    {% if comment.author == user %}
+                    <div class="ms-auto flex-shrink-0 align-self-start p-0">
+                        <a href="#" onclick="editComment('{% url 'blog:update_comment' comment.id %}', {{comment.id}}); return false;" class="btn btn-outline-primary p-1">
+                            <i class="fas fa-pen fa-lg"></i>
+                        </a>
+                        <a href="#" class="btn btn-outline-danger p-1" onclick="deleteComment('{% url 'blog:delete_comment' comment.id %}', {{comment.id}}, '{{ csrf_token }}'); return false;">
+                            <i class="fas fa-trash-alt fa-lg"></i>
+                        </a>
+                    </div>
+                    {% endif %}
+                    </div>
+                {% endfor %}
+                </div>
+        </div>
+            {% endif %}
+            <div class="">
+                <form action="" method="post" class="d-flex mt-2">
+                    {% csrf_token %}
+                    <div class="flex-fill">
+                    {{ comment_form|crispy }}
+                    </div>
+                    <button type="submit" class="btn btn-primary ms-2 align-self-end ">Submit</button>
+                    
+                </form>
+            </div>
+        
+    </div>
 </div>
+
 
 {% endblock %}
 {% block scripts %}

@@ -92,3 +92,67 @@ function unFollow(url, url2, id) {
     element.className = "badge btn-primary btn";
     element.setAttribute('onclick',`follow('${url2}', '${url}', ${id}); return false;`); 
 }
+var current_crop;
+var x_input = document.getElementById('x');
+var y_input = document.getElementById('y');
+var width_input = document.getElementById('width');
+var height_input = document.getElementById('height');
+// cropping
+function readURL() {
+    const my_img = document.getElementById("myimg");
+    const input = document.getElementById("id_image");
+    if(input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            my_img.src = e.target.result;
+
+            if (current_crop) {
+                current_crop.destroy();
+            }
+            var cropper = new Cropper(my_img, {
+                aspectRatio: 1 / 1,
+                crop(event) {
+                    console.log(event.detail.x);
+                    x_input.value = event.detail.x;
+                    console.log(event.detail.y);
+                    y_input.value = event.detail.y;
+                    console.log(event.detail.width);
+                    width_input.value = event.detail.width;
+                    console.log(event.detail.height);
+                    height_input.value = event.detail.height;
+                },
+            });
+            current_crop = cropper;
+            
+
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+
+}
+document.querySelector('#id_image').addEventListener('change', async () => {
+    readURL();
+});
+
+$(document).ready(function () {
+    const myimg = document.getElementById("myimg");
+    var div = document.getElementById("div_id_image");
+    myimg.src = div.children[1].children[0].href;
+    var cropper = new Cropper(myimg, {
+        aspectRatio: 1 / 1,
+        crop(event) {
+            console.log(event.detail.x);
+            x_input.value = event.detail.x;
+            console.log(event.detail.y);
+            y_input.value = event.detail.y;
+            console.log(event.detail.width);
+            width_input.value = event.detail.width;
+            console.log(event.detail.height);
+            height_input.value = event.detail.height;
+        },
+    });
+    current_crop = cropper;
+
+   
+});
+

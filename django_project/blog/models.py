@@ -5,10 +5,16 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 
+def user_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return 'post_pic/user_{}/{}'.format(instance.author.id, filename)
+
+
+
 class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
-    image = models.ImageField(upload_to='post_pic', null=True, blank=True)
+    image = models.ImageField(upload_to=user_directory_path, blank=False, null=False, default="no-image.png")
     date_posted = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)

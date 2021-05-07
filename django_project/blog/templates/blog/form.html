@@ -1,17 +1,31 @@
 {% extends 'blog/base.html' %}
 {% load crispy_forms_tags %}
+
 {% block content %}
-<div class="content-section">
-    <form action="" method="post">
-    {% csrf_token %}
-        <fieldset class="form-group">
-            <legend class="border-bottom mb-3">Create Post</legend>
-            {{ form|crispy }}
-        </fieldset>
-        <div class="form-group mt-2">
-            <button type="submit" class="btn btn-primary">Submit</button>
-            <a href="{% url 'blog:home' %}" class="btn btn-outline-info">Cancel</a>
-        </div>
-    </form>
+<div class="d-flex justify-content-center">
+  <div class="content-section col-md-7">
+      <form action="" method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+          <fieldset class="form-group">
+              <legend class="border-bottom mb-3 fw-bold">CREATE POST</legend>
+              {{ form|crispy }}
+          </fieldset>
+          <div class="form-group mt-2">
+              <button type="submit" class="btn btn-primary fw-bold rounded-pill col-12">Submit</button>
+          </div>
+      </form>
+  </div>
 </div>
 {% endblock %}
+
+{% block scripts %}
+<script>
+  tinymce.init({
+    selector: "#id_content",
+    plugins: "emoticons",
+    toolbar: "emoticons",
+    toolbar_location: "bottom",
+    menubar: false
+  });
+</script>
+{% endblock scripts %}
