@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from .models import Post, Comment, Favorite
-from .forms import CommentForm
+from .forms import CommentForm, PostForm
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
@@ -53,8 +53,9 @@ def HomeView(request):
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    fields = ['title', 'content', 'image']
+    # fields = ['title', 'content', 'image']
     template_name = "blog/form.html"
+    form_class = PostForm
     success_url = reverse_lazy('blog:home')
 
     # ? https://docs.djangoproject.com/en/3.1/topics/class-based-views/generic-editing/
@@ -65,8 +66,9 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
-    fields = ['title', 'content', 'image']
     template_name = "blog/form.html"
+    form_class = PostForm
+
 
     def get_queryset(self):
         queryset = super().get_queryset()

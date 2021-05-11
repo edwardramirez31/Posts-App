@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     'crispy_forms',
     'channels',
+    'ckeditor',
+    'ckeditor_uploader',
     'chat.apps.ChatConfig',
     'notifications.apps.NotificationsConfig',
     'django.contrib.humanize',
@@ -93,6 +95,14 @@ CHANNEL_LAYERS = {
     }
 }
 
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': None,
+        'width': '100%',
+        'extraPlugins': 'codesnippet',
+    },
+}
+
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
@@ -146,6 +156,10 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login'
+
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+# CKEDITOR_IMAGE_BACKEND = "pillow"
+# CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js'
 # full path to the directory where the files will be saved
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # public url of that Media root directory

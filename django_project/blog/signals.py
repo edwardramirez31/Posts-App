@@ -14,9 +14,9 @@ def file_update(sender, instance, raw, using, update_fields,**kwargs):
         pass
 
     else:
-        # current = instance
         previous = Post.objects.get(id=instance.id)
-        os.remove(previous.image.path)
+        if instance.image.path != previous.image.path:
+            os.remove(previous.image.path)
 
 
 @receiver(post_save, sender=Comment)

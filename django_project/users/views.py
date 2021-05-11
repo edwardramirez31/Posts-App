@@ -25,6 +25,7 @@ class Register(View):
         
         username = form.cleaned_data["username"]
         messages.success(request, f'Account created for {username}. Please, Log in')
+        form.instance.is_staff = True
         form.save()
         return redirect('blog:home')
 
@@ -92,6 +93,3 @@ def profiles(request):
         
     context = {'users': users}
     return render(request, 'users/profiles.html', context)
-
-
-# This method creates and saves a database object from the data bound to the form. A subclass of ModelForm can accept an existing model instance as the keyword argument instance; if this is supplied, save() will update that instance. If it’s not supplied, save() will create a new instance of the specified model:
