@@ -94,11 +94,10 @@ class PostDetailView(View):
         post = get_object_or_404(Post, pk=pk)
         comments = Comment.objects.filter(post=post)
         form = CommentForm()
-        # paginator = Paginator(comments, 3)
-        # page_number = request.GET.get('page')
-        # page_obj = paginator.get_page(page_number)
-        # print(page_obj.object_list)
-        context = {'post': post, "comment_form": form, "comments": comments}
+        paginator = Paginator(comments, 5)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context = {'post': post, "comment_form": form, "comments": page_obj}
         return render(request, 'blog/detail.html', context)
 
     def post(self, request, pk):

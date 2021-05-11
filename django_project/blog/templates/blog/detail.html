@@ -2,10 +2,17 @@
 {% load crispy_forms_tags%}
 {% load static %}
 {% load humanize %}
+{% block head %}
+<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+{% endblock head %}
 {% block content %}
 <div class="row">
     <article class="card col-md-8 mx-auto">
-        <header class="card-header d-flex align-items-center">
+        <h1 class="article-title detail-title px-3 py-2"><a href=""></a> {{ post.title }}</h1>
+        <header class="card-header d-flex align-items-center mb-3">
         <img src="{{ post.author.profile.image.url }}" alt="{{ post.author }} Profile Pic" class="rounded-circle article-img">
         <div id="author-profile">
             <a href="{% url 'profile' post.author.id %}">{{post.author.username}}</a><br> 
@@ -13,7 +20,9 @@
         </div>
         {% if user.is_authenticated %}
         <div class="dropdown ms-auto">
-            <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+            <button class="btn text-white dropdown-toggle caret-off" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-ellipsis-h fa-sm"></i>
+            </button>
             <div class="dropdown-menu bg-dark" aria-labelledby="dropdownMenuButton">
             <a 
             href="#" 
@@ -39,31 +48,48 @@
         <img src="{{ post.image.url }}" class="car-img-top img-fluid" alt="{{ post }} Pic"/>
         {% endif %}
         <div class="card-body">
-            <h2 class="card-title article-title"><a href=""></a> {{ post.title }}</h2>
-            <p class="card-text article-content">{{ post.content|safe }}</p>
+            <div class="card-text article-content">{{ post.content|safe }}</div>
         </div>
     </article>
     
-    {% comment %} esto falta por analizar {% endcomment %}
-    <div class="col-md-4 mx-auto">
-        <div class="content-section h-100 d-flex flex-column justify-content-between">
+    
+</div>
+<div class="col-md-8 mx-auto mt-5">
+        <div class="content-section d-flex flex-column justify-content-between">
         <div>
             <h3>Comment Section</h3>
+            <div class="my-3">
+                <form action="" method="post" class="d-flex mt-2">
+                    {% csrf_token %}
+                    <div class="flex-fill">
+                    {{ comment_form|crispy }}
+                    </div>
+                    <button type="submit" class="btn msg-right text-white rounded-pill ms-2 align-self-end ">
+                        <i class="fas fa-paper-plane fa-lg"></i>
+                    </button>
+                </form>
+            </div>
                 {% if comments %}
-                <div class="list-group group">
+                <hr>
+                <div class="list-group infinite-container">
             
                 {% for comment in comments %}
                     <div class="list-group-item comment-item d-flex align-items-center mt-2 infinite-item" id="comment-{{ comment.id }}">
                     <img src="{{ comment.author.profile.image.url }}" alt="{{ comment.author }} Profile Pic" class="rounded-circle article-img align-self-start">
                     <div><a href="{% url 'profile' comment.author.id %}">{{comment.author.username}} </a><small class="text-muted">({{ comment.updated_at|naturaltime }})</small><br><span id="comment-text-{{ comment.id }}">{{ comment.text }}</span></div>
                     {% if comment.author == user %}
-                    <div class="ms-auto flex-shrink-0 align-self-start p-0">
-                        <a href="#" onclick="editComment('{% url 'blog:update_comment' comment.id %}', {{comment.id}}); return false;" class="btn btn-outline-primary p-1">
-                            <i class="fas fa-pen fa-lg"></i>
+                    <div class="dropdown ms-auto">
+                        <button class="btn dropdown-toggle caret-off" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-h fa-sm text-white"></i>
+                        </button>
+                        <div class="dropdown-menu bg-dark" aria-labelledby="dropdownMenuButton">
+                        <a href="#" onclick="editComment('{% url 'blog:update_comment' comment.id %}', {{comment.id}}); return false;" class="text-secondary dropdown-item">
+                            <i class="fas fa-pen fa-lg"></i> Edit
                         </a>
-                        <a href="#" class="btn btn-outline-danger p-1" onclick="deleteComment('{% url 'blog:delete_comment' comment.id %}', {{comment.id}}, '{{ csrf_token }}'); return false;">
-                            <i class="fas fa-trash-alt fa-lg"></i>
+                        <a href="#" class="text-secondary dropdown-item" onclick="deleteComment('{% url 'blog:delete_comment' comment.id %}', {{comment.id}}, '{{ csrf_token }}'); return false;">
+                            <i class="fas fa-trash-alt fa-lg"></i> Delete
                         </a>
+                        </div>
                     </div>
                     {% endif %}
                     </div>
@@ -71,22 +97,37 @@
                 </div>
         </div>
             {% endif %}
-            <div class="">
-                <form action="" method="post" class="d-flex mt-2">
-                    {% csrf_token %}
-                    <div class="flex-fill">
-                    {{ comment_form|crispy }}
-                    </div>
-                    <button type="submit" class="btn btn-primary ms-2 align-self-end ">Submit</button>
-                    
-                </form>
-            </div>
-        
+    </div>
+
+{% if comments.has_next %}
+<a class="infinite-more-link" href="?page={{ comments.next_page_number }}"></a>
+<div class="d-flex justify-content-center" style="display:none;">
+    <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
     </div>
 </div>
-
+{% endif %}
 
 {% endblock %}
 {% block scripts %}
 <script type="text/javascript" src="{% static 'blog/scripts.js' %}"></script>
+<script src="{% static 'blog/jquery.waypoints.min.js' %}"></script>
+<script src="{% static 'blog/infinite.min.js' %}"></script>
+<script>
+var infinite = new Waypoint.Infinite({
+    element: $('.infinite-container')[0],
+    
+    offset: 'bottom-in-view',
+
+    onBeforePageLoad: function () {
+    $('.spinner-border').show();
+    $('.infinite-more-link').hide();
+    },
+    onAfterPageLoad: function () {
+    $('.spinner-border').hide();
+    }
+
+    });
+
+</script>
 {% endblock %}
