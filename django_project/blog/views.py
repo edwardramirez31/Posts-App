@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from .models import Post, Comment, Favorite
+from .models import Post, Comment, Favorite, Like
 from .forms import CommentForm, PostForm
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -40,13 +40,15 @@ def HomeView(request):
     following = set(request.user.profile.following.all())
     users = all_users.difference(following)
     context = {
-        'posts': posts, 
         "searchValue": searchValue, 
         "search": True,
         'page_obj': page_obj,
         #excluir los que no se sigan
         # incluir en el perfil etiquetas de intereses y hacer un match
-        'users': list(users)}
+        'users': list(users),
+        'favorites': request.user.all_favs.all(),
+        "liked": request.user.all_liked.all()
+        }
     return render(request, 'blog/home.html', context)
 
 
@@ -97,7 +99,16 @@ class PostDetailView(View):
         paginator = Paginator(comments, 5)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-        context = {'post': post, "comment_form": form, "comments": page_obj}
+        cmt_number = len(comments)
+        if cmt_number == 0:
+            cmt_number = ""
+        
+        likes_number = len(post.likes.all())
+        if likes_number == 0:
+            likes_number = ""
+
+        context = {'post': post, "comment_form": form, "comments": page_obj, 
+        "cmt_number": cmt_number, "likes": likes_number}
         return render(request, 'blog/detail.html', context)
 
     def post(self, request, pk):
@@ -161,5 +172,28 @@ class FavoritesView(LoginRequiredMixin, View):
         all_users = set(User.objects.all())
         following = set(request.user.profile.following.all())
         users = all_users.difference(following)
-        context = {"page_obj": posts, "users": list(users)}
+        context = {"page_obj": posts, "users": list(
+            users), "favorites": request.user.all_favs.all(), "liked": request.user.all_liked.all()}
         return render(request, "blog/home.html", context)
+
+
+class LikeView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        try:
+            like = Like(user=request.user, post=post)
+            like.save()
+        except:
+            pass
+        return HttpResponse()
+
+
+class UnLikeView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        try:
+            like = Like.objects.get(user=request.user, post=post)
+            like.delete()
+        except:
+            pass
+        return HttpResponse()

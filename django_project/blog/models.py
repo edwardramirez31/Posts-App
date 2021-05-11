@@ -21,6 +21,7 @@ class Post(models.Model):
     comments = models.ManyToManyField(
         User, through='Comment', related_name='posts_comments')
     favs = models.ManyToManyField(User, through='Favorite', related_name='all_favs')
+    likes = models.ManyToManyField(User, through='Like', related_name='all_liked')
 
     def __str__(self):
         return self.title
@@ -50,4 +51,14 @@ class Favorite(models.Model):
         unique_together = ('user', 'post')
 
     def __str__(self):
-        return f'{self.user.username} favs {self.post}'
+        return f'{self.user.username} saved {self.post}'
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='all_likes')
+
+    class Meta:
+        unique_together = ('user', 'post')
+
+    def __str__(self):
+        return f'{self.user.username} likes {self.post}'

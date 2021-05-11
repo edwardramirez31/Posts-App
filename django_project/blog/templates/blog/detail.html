@@ -26,11 +26,9 @@
             <div class="dropdown-menu bg-dark" aria-labelledby="dropdownMenuButton">
             <a 
             href="#" 
-            class="btn-{% if not post in user.all_favs.all %}no-{% endif %}favorite dropdown-item d-flex align-items-center"
-            id="fav-{{ post.id }}"
-            onclick="handleFavorites('{% url 'blog:fav' post.id %}', '{% url 'blog:unfav' post.id %}', {{ post.id }});return false;"
+            class="btn-no-favorite dropdown-item d-flex align-items-center"
             >
-                <i class="fas fa-bookmark fa-lg me-2"></i>Save</span>
+                Cancel
             </a>
             {%if user == post.author %}
               <a href="{% url 'blog:update' post.id %}" class="btn btn-outline-primary dropdown-item text-secondary">
@@ -44,10 +42,35 @@
         </div>
         {% endif %}
         </header>
-        {% if post.image %}
         <img src="{{ post.image.url }}" class="car-img-top img-fluid" alt="{{ post }} Pic"/>
-        {% endif %}
         <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="d-flex">
+                    <a
+                    href="#" 
+                    class="btn-{% if not post in user.all_liked.all %}no-{% endif %}favorite"
+                    id="like-{{ post.id }}"
+                    onclick="handleFavorites('{% url 'blog:like' post.id %}', '{% url 'blog:un_like' post.id %}', 'like-{{ post.id }}');return false;"
+                    >
+                    <i class="fas fa-star fa-lg"></i>
+                    </a>
+                    <span id="mg" class="ms-1" style="font-family: 'Helvetica Neue';">{{ likes }}</span>
+                    <a href="#id_text" class="text-white ms-3">
+                    <i class="far fa-comment fa-lg"></i>
+                    </a>
+                    <span class="ms-2" style="font-family: 'Helvetica Neue';">{{ cmt_number }}</span>
+                </div>
+                <div>
+                    <a 
+                    href="#" 
+                    class="btn-{% if not post in user.all_favs.all %}no-{% endif %}favorite"
+                    id="fav-{{ post.id }}"
+                    onclick="handleFavorites('{% url 'blog:fav' post.id %}', '{% url 'blog:unfav' post.id %}', 'fav-{{ post.id }}');return false;"
+                    >
+                    <i class="fas fa-bookmark fa-lg"></i>
+                    </a>
+                </div>
+                </div>
             <div class="card-text article-content">{{ post.content|safe }}</div>
         </div>
     </article>

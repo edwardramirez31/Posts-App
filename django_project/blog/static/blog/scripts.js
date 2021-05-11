@@ -23,8 +23,8 @@ function sendPost(url) {
 }
     
 
-function handleFavorites(url, url2, postID) {
-    var anchor = document.getElementById('fav-'+postID);
+function handleFavorites(url, url2, id) {
+    var anchor = document.getElementById(id);
     if (anchor.className.includes("btn-favorite")){
         sendPost(url2);
         anchor.classList.replace("btn-favorite", "btn-no-favorite");
@@ -102,6 +102,9 @@ function unFollow(url, url2, id) {
     element.className = "badge btn-primary btn";
     element.setAttribute('onclick',`follow('${url2}', '${url}', ${id}); return false;`); 
 }
+
+
+
 var current_crop;
 var x_input = document.getElementById('x');
 var y_input = document.getElementById('y');

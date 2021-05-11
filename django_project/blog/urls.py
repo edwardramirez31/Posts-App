@@ -16,6 +16,8 @@ urlpatterns = [
     path('update/comment/<int:pk>', CommentUpdateView, name='update_comment'),
     path('fav/<int:pk>', MarkFav.as_view(), name='fav'),
     path('unfav/<int:pk>', UnMarkFav.as_view(), name='unfav'),
+    path('like/<int:pk>', LikeView.as_view(), name='like'),
+    path('unlike/<int:pk>', UnLikeView.as_view(), name='un_like'),
 ]
 
 # if settings.DEBUG:
