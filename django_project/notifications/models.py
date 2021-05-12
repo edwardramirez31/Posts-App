@@ -1,13 +1,15 @@
 from django.db import models
-from blog.models import Comment
+from blog.models import Comment, Post
 from users.models import Profile
 from django.contrib.auth.models import User
 from chat.models import Message
 from django.urls import reverse
 # Create your models here.
 class Notification(models.Model):
-    CHOICES = ((1, 'Message'), (2, 'Comment'), (3, 'Follow'))
+    CHOICES = ((1, 'Message'), (2, 'Comment'), (3, 'Follow'), (4, 'Like'))
     # hacer un field para la url
+    post = models.ForeignKey(Post, on_delete=models.CASCADE,
+                            related_name="post_notifications", blank=True, null=True)
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE,
                             related_name="cmt_notifications", blank=True, null=True)
     message = models.ForeignKey(Message, on_delete=models.CASCADE,
@@ -26,8 +28,11 @@ class Notification(models.Model):
             return reverse('chat:detail', args=[self.message.chatroom.id])
         elif self.notification_type == 2:
             return reverse('blog:detail', args=[self.comment.post.id])
-        else:
+        elif self.notification_type == 3:
             return reverse('profile', args=[self.sender.id])
+        else:
+            return reverse('blog:detail', args=[self.post.id])
+
 
 
     def __str__(self):

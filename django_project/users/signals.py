@@ -49,6 +49,6 @@ def follow_update(sender, instance, action, pk_set, ** kwargs):
     if action == "post_add":
         user_sender = instance.user
         user_receiver = User.objects.get(pk=pk_set.pop())
-        text = f"{user_sender} has followed you!"
+        text = f"{user_sender} is following you!"
         notification = Notification(sender=user_sender, user=user_receiver, notification_type=3, text_preview=text)
         notification.save()

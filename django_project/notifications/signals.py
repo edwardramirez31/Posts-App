@@ -15,19 +15,20 @@ from django.urls import reverse
 
 @receiver(post_save, sender=Notification)
 def new_user(sender, instance, created, **kwargs):
-    if created:
-        # canal de comunicacion para todas las instancias
-        channel_layer = get_channel_layer()
-        group_name = f"user_{instance.user.id}"
-        # print(group_name)
-        # enviar un mensaje al channel layer en forma de broadcast
-        async_to_sync(channel_layer.group_send)(
-            # "groupname", {lo que voy a enviar al grupo}
-            group_name, {
-                "type": "new.follow",
-                "event": "New Follower",
-                "picture": instance.sender.profile.image.url,
-                "message": instance.text_preview,
-                "url": reverse("notifications:mark", args=[instance.id])
-            }
-        )
+    # created no chequea el estado de updated
+    # canal de comunicacion para todas las instancias
+    channel_layer = get_channel_layer()
+    group_name = f"user_{instance.user.id}"
+    # print(group_name)
+    # enviar un mensaje al channel layer en forma de broadcast
+    async_to_sync(channel_layer.group_send)(
+        # "groupname", {lo que voy a enviar al grupo}
+        group_name, {
+            "type": "new.follow",
+            "event": "New Follower",
+            "picture": instance.sender.profile.image.url,
+            "message": instance.text_preview,
+            "url": reverse("notifications:mark", args=[instance.id])
+        }
+    )
+    
