@@ -3,12 +3,12 @@
 {% load humanize %}
 {% load user_info %}
 {% block content %}
-<div class="content-section col-md-6 m-auto">
+<div class="content-section col-md-7 m-auto">
   <h2 class="mb-4">Notifications</h2>
   <div class=" infinite-container">
     {% if page_obj %}
     {% for notification in page_obj %}
-    <div class="infinite-item p-3 mb-2 list-group-item-action rounded {% if not notification.has_seen %}not-seen{%endif%}">
+    <div class="infinite-item p-3 mb-2 list-group-item-action rounded {% if not notification.has_seen %}not-seen{%endif%}" id="not-{{ notification.id }}">
       <div class="d-flex align-items-center text-decoration-none">
           <img src="{{ notification.sender.profile.image.url }}" alt="{{ user }} Profile Pic" class="rounded-circle article-img">
           <div class="d-flex flex-column">
@@ -20,9 +20,15 @@
               {{ notification.date|naturaltime }}
             </div>
           </div>
-          {% if not notification.has_seen %}
-            <div class="text-white fw-bold ms-auto">New!</div>
-          {%endif%}
+          
+            <div class="text-white fw-bold ms-auto d-flex align-items-center">
+            {% if not notification.has_seen %}
+            <span>New!</span>
+            {%endif%}
+              <a class="btn" alt="Delete" onclick="deleteNotification('{% url 'notifications:delete' notification.id %}', 'not-{{ notification.id }}'); return false;">
+                <i class="far fa-times-circle text-secondary fa-lg"></i>
+              </a>
+            </div>
       </div>
     </div>
     {% endfor %}

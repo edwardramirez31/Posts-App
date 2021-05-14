@@ -103,6 +103,26 @@ function unFollow(url, url2, id) {
     element.setAttribute('onclick',`follow('${url2}', '${url}', ${id}); return false;`); 
 }
 
+function handleLikes(url, url2, id) {
+    var anchor = document.getElementById(id);
+    var mg = document.getElementById("mg");
+    var count = parseInt(mg.innerHTML) | 0;
+    if (anchor.className.includes("btn-favorite")){
+        sendPost(url2);
+        anchor.classList.replace("btn-favorite", "btn-no-favorite");
+        mg.innerHTML = count - 1;
+    } else {
+        sendPost(url);
+        anchor.classList.replace("btn-no-favorite", "btn-favorite");
+        mg.innerHTML = count + 1;
+    }
+}
+
+function deleteNotification(url, id) {
+    var element = document.getElementById(id);
+    sendPost(url);
+    element.remove();
+}
 
 
 var current_crop;
