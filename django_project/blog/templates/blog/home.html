@@ -46,7 +46,6 @@
               onclick="handleFavorites('{% url 'blog:like' post.id %}', '{% url 'blog:un_like' post.id %}', 'like-{{ post.id }}');return false;"
               >
               <i class="fas fa-star fa-lg"></i>
-              <span id="mg"></span>
               </a>
             <a href="{% url 'blog:detail' post.id %}#id_text" class="text-white ms-3">
               <i class="far fa-comment fa-lg"></i>
@@ -94,6 +93,36 @@
           </div>
         </div>
         {% endfor %}
+  </div>
+  <div class="content-section mt-3 sticky-md-top">
+  <h3 class="mb-4"><i class="fas fa-chart-line fa-lg"></i> Trending now</h3>
+  {% for post in trending %}
+    <div class="mb-4 d-flex">
+    <div style="color: rgba(200, 200, 200, 1); font-size: 30px; font-weight: bold; font-family: Helvetica; position: relative; top: -15px;" class="me-3">
+      0{{ forloop.counter }}
+    </div>
+      <div class="flex-fill">
+        <a class="d-flex align-items-center mb-2 text-decoration-none" href="{% url 'profile' post.author.id %}">
+          <img src="{{ post.author.profile.image.url }}" alt="{{ post.author }} Profile Pic" class="rounded-circle me-2" style="width: 25px; height: 25px;">
+          <div>@{{ post.author.username }}</div>
+          <div class="ms-auto">
+          <div class="d-flex">
+              <div class="text-light">
+                <i class="fas fa-star fa-sm"></i>
+                <span id="mg" class="me-1" style="font-family: 'Helvetica Neue';">{{ likes }}{{ post.likes.all|length }}</span>
+              </div>
+              <div class="text-light">
+                <i class="far fa-comment fa-sm"></i>
+                <span id="mg" class="me-1" style="font-family: 'Helvetica Neue';">{{ likes }}{{ post.comments.all|length }}</span>
+              </div>
+            </div>
+          </div>
+        </a>
+        <h4 class="card-title mb-0 fw-bold" style="font-family: Helvetica;font-size: 20px;"><a class="article-title text-decoration-none" href="{% url 'blog:detail' post.id %}">{{ post.title|truncatechars:"50" }}</a></h4>
+        <div class="text-muted">{{ post.updated_at|date:"M n Y" }}</div>
+      </div>
+    </div>
+  {% endfor %}
   </div>
 </div>
 </div>

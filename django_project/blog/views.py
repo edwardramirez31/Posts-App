@@ -11,6 +11,9 @@ from django.core.paginator import Paginator
 from django.contrib.auth.models import User
 from users.models import Profile
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count
+from django.utils import timezone
+from datetime import timedelta
 # ? ! * TODO Create your views here.
 # TODO extensions to use:
 # * Duplicate action
@@ -35,10 +38,15 @@ def HomeView(request):
     paginator = Paginator(posts, number)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    # users
+    # users section
     all_users = set(User.objects.all().exclude(id=request.user.id))
     following = set(request.user.profile.following.all())
     users = all_users.difference(following)
+    # trending Section
+    last_week_day = timezone.now() - timedelta(days=30)
+    trending = Post.objects.filter(updated_at__gte=last_week_day).annotate(
+        c_count=Count("comments", distinct=True)).annotate(l_count=Count("likes", distinct=True)).order_by("-c_count", "-l_count")[:5]
+    print(trending)
     context = {
         "searchValue": searchValue, 
         "search": True,
@@ -47,7 +55,8 @@ def HomeView(request):
         # incluir en el perfil etiquetas de intereses y hacer un match
         'users': list(users),
         'favorites': request.user.all_favs.all(),
-        "liked": request.user.all_liked.all()
+        "liked": request.user.all_liked.all(),
+        "trending": trending
         }
     return render(request, 'blog/home.html', context)
 
@@ -169,7 +178,7 @@ class UnMarkFav(LoginRequiredMixin, View):
 class FavoritesView(LoginRequiredMixin, View):
     def get(self, request):
         posts = request.user.all_favs.all().order_by('-updated_at')
-        all_users = set(User.objects.all())
+        all_users = set(User.objects.all().exclude(id=request.user.id))
         following = set(request.user.profile.following.all())
         users = all_users.difference(following)
         context = {"page_obj": posts, "users": list(

@@ -50,7 +50,7 @@
                     href="#" 
                     class="btn-{% if not post in user.all_liked.all %}no-{% endif %}favorite"
                     id="like-{{ post.id }}"
-                    onclick="handleFavorites('{% url 'blog:like' post.id %}', '{% url 'blog:un_like' post.id %}', 'like-{{ post.id }}');return false;"
+                    onclick="handleLikes('{% url 'blog:like' post.id %}', '{% url 'blog:un_like' post.id %}', 'like-{{ post.id }}');return false;"
                     >
                     <i class="fas fa-star fa-lg"></i>
                     </a>
