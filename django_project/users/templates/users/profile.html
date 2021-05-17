@@ -1,33 +1,187 @@
 {% extends 'blog/base.html'%}
+{% load static %}
 {% load crispy_forms_tags%}
+{% load humanize %}
 {% block content %}
-<div class="content-section">
-    <div class="media d-flex">
+<div class="content-section d-flex justify-content-center">
+    <div class="media d-flex justify-content-around align-items-stretch">
         <div>
-            <img class="rounded-circle account-img" src="{{ user_.profile.image.url }}" alt="Profile Picture" style="width:120px;">
+            <img class="rounded-circle account-img" src="{{ user_.profile.image.url }}" alt="Profile Picture">
         </div>
-        <div class="media-body">
-            <h4 class="account-heading">{{ user_.username }}</h4>
-            <p class="text-secondary">Email: {{ user_.email }}<br>
+        <div class="media-body flex-fill ms-5 align-content-between">
+            <div class='d-flex align-items-center justify-content-between mb-2'>
+              <span class="account-heading me-3">{{ user_.username }}</span>
+              {% if user == user_ %}
+              <a 
+                class="badge btn-primary btn"
+                href="{% url 'update_profile' %}"
+                >
+                  Edit Profile
+                </a>
+              {% else %}
+              {% if user_ in user.profile.following.all %}
+              <a class="badge btn-light text-dark me-1" href="{% url 'chat:get_chatroom' user_.id %}" id="message"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-dots-fill" viewBox="0 0 16 16">
+                    <path d="M16 8c0 3.866-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7zM5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                  </svg>
+                </a>
+                <a class="badge btn-light text-dark" href="#" id="{{user_.id}}"
+                onclick="unFollow('{% url 'un_follow' user_.id %}', '{% url 'follow' user_.id %}', {{ user_.id }});return false;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
+                  <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                </svg>
+                </a>
+                {% else %}
+                <a
+                id="{{user_.id}}"
+                class="badge btn-primary btn"
+                onclick="follow('{% url 'follow' user_.id %}','{% url 'un_follow' user_.id %}', {{ user_.id }});return false;"
+                >
+                  Follow
+                </a>
+                {% endif %}
+              {% endif %}
+              
+            </div>
+            <div class="d-flex justify-content-between">
+              <div class="pe-2">
+                <span class="fw-bold">{{ user_.post_set.all|length }}</span> posts
+              </div>
+              <div class="pe-2">
+                <span class="fw-bold text-decoration-none text-white" data-bs-toggle="modal" data-bs-target="#followersModal" style="cursor: pointer;">{{ followers|length }}</span> followers
+              </div>
+              <div>
+                <span class="fw-bold text-decoration-none text-white" data-bs-toggle="modal" data-bs-target="#followingModal" style="cursor: pointer;">{{ following|length }}</span> following
+              </div>
+              
+            </div>
+            <p class="fw-bold mt-3">
             {% if user_.first_name != "" %}
-            First Name: {{ user_.first_name }}<br>
-            Last Name: {{ user_.last_name }}
+            {{ user_.first_name }} {{ user_.last_name }}
             {% endif %}
             </p>
+            <div>
+            {{ user_.profile.presentation|default_if_none:""|safe }}
+            </div>
         </div>
     </div>
-    {% if user == user_ %}
-    <form action="" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Profile Info</legend>
-            {{ user_form|crispy }}
-            {{ profile_form|crispy }}
-        </fieldset>
-        <div class="form-group mt-2">
-            <button class="btn btn-outline-info" type="submit">Update</button>
-        </div>
-    </form>
-    {% endif %}
 </div>
+
+<h2 class="border-bottom my-3"></h2>
+<div class='row infinite-container'>
+  {% for post in page_obj %}
+  <article class="col-md-4 mb-4 pic infinite-item art">
+        
+    <a href="{% url 'blog:detail' post.id %}"><img src="{{ post.image.url }}" class="card-img-top img-responsive" alt="{{ post }} Pic"/></a>
+      
+    <div class="text-content w-100">
+      <h2 class=""><a class="article-title detail-title title" href="{% url 'blog:detail' post.id %}">{{ post.title }}</a></h2>
+      <div class="detail-content text-white">{{ post.content|truncatechars:'100'|safe }}</div>
+      
+    </div> 
+  </article>
+  {% endfor %}
+</div>
+{% comment %} modals {% endcomment %}
+<!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="followersModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-dark" id="exampleModalLabel">Followers</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% for profile in followers %}
+        <div class="mb-3 d-flex align-items-center">
+          <img src="{{ profile.image.url }}" alt="{{ profile.user }} Profile Pic" class="rounded-circle article-img">
+          <div class="flex-fill d-flex justify-content-between align-items-center">
+          <div class="d-flex flex-column">
+              <span class="fw-bold">
+                  <a href="{% url 'profile' profile.user.id %}" class=" text-decoration-none">{{profile.user}}</a>
+              </span>
+              <span class="small">
+                  {{ profile.user.first_name }} {{ profile.user.last_name }}
+              </span>
+          </div>
+          </div>
+      </div>
+      {% endfor %}
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="followingModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-dark" id="ModalLabel">Following</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% for user in following %}
+        <div class="mb-3 d-flex align-items-center">
+          <img src="{{ user.profile.image.url }}" alt="{{ user }} Profile Pic" class="rounded-circle article-img">
+          <div class="flex-fill d-flex justify-content-between align-items-center">
+          <div class="d-flex flex-column">
+              <span class="fw-bold">
+                  <a href="{% url 'profile' user.id %}" class=" text-decoration-none">{{user}}</a>
+              </span>
+              <span class="small">
+                  {{ user.first_name }} {{ user.last_name }}
+              </span>
+          </div>
+          </div>
+      </div>
+      {% endfor %} 
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if page_obj.has_next %}
+<a class="infinite-more-link" href="?page={{ page_obj.next_page_number }}"></a>
+<div class="d-flex justify-content-center" style="display:none;">
+    <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+var messageURL = "{% url 'chat:get_chatroom' user_.id %}";
+</script>
+<script type="text/javascript" src="{% static 'blog/scripts.js' %}"></script>
+<script src="{% static 'blog/jquery.waypoints.min.js' %}"></script>
+<script src="{% static 'blog/infinite.min.js' %}"></script>
+<script>
+var infinite = new Waypoint.Infinite({
+        element: $('.infinite-container')[0],
+        handler: function(direction) {
+
+    },
+    offset: 'bottom-in-view',
+
+    onBeforePageLoad: function () {
+    $('.spinner-border').show();
+    $('.infinite-more-link').hide();
+    },
+    onAfterPageLoad: function () {
+    $('.spinner-border').hide();
+    }
+
+    });
+
+</script>
+
 {% endblock %}

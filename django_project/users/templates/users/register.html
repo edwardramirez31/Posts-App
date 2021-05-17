@@ -1,17 +1,17 @@
 {% extends 'blog/base.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
-<div class="content-section">
+<div class="content-section col-md-6 mx-auto decoration">
     <form action="" method="post">
         {% csrf_token %}
         <fieldset class="form-group">
-            <legend class="border-bottom">Join Us</legend>
+            <legend class="fw-bold text-center">JOIN US</legend>
             {{ form|crispy }}
         </fieldset>
-        <button class="btn btn-outline-info" type="submit">Sign up</button>
+        <button class="btn btn-primary col-12 fw-bold" type="submit">SIGN UP</button>
     </form>
-    <div class="text-muted border-top mt-2">
-    Already have an account? <a href="{% url 'login' %}">Log in</a>
+    <div class="mt-2">
+    Already have an account? <a href="{% url 'login' %}" class="text-decoration-none">Log in</a>
     </div>
 </div>
 {% endblock %}
