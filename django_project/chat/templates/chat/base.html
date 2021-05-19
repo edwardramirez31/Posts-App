@@ -1,0 +1,33 @@
+{% extends 'blog/base.html' %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-md-4">
+    <div class="content-section px-0" style="height: 500px; overflow: auto">
+    <h3 class="ms-3">Messages</h3>
+    {% if chats %} 
+      {% for chatroom, user in chats %} 
+      
+        <div class="p-3 d-flex align-items-center w-100 {% if chatroom == room %}active-chat{% endif %}"
+        >
+          <img src="{{ user.profile.image.url }}" alt="{{ user }} Profile Pic" class="rounded-circle article-img">
+          <div class="flex-fill d-flex justify-content-between">
+            <span class="fw-bold">
+              <a href="{% url 'chat:detail' chatroom %}" class="text-white text-decoration-none">{{user.username}}</a>
+            </span>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+    <div class="p-3 lead">Let's chat with somebody now</div>
+    {% endif %}
+    </div>
+  </div> 
+  <div class="col-md-6">
+      {% block msg_content %}
+      {% endblock msg_content %}
+  </div>
+</div>
+{% endblock content %}
+

@@ -1,0 +1,102 @@
+{% extends 'chat/base.html' %}
+{% load static %}
+
+{% block msg_content %}
+<div class="content-section d-flex flex-column align-items-center justify-content-center" style="height: 100%;">
+  <div class="">
+    <i class="far fa-comments fa-5x"></i>
+  </div>
+  <p class="lead">
+  Your messages
+  </p>
+  <div class="fw-bold">
+  Let's chat with a friend
+  </div>
+  <a href="#" class="btn msg-right rounded-pill fw-bold text-white mt-3 px-4" data-bs-toggle="modal" data-bs-target="#followingModal" >Send message</a>
+  </div>
+</div>
+
+{% comment %} modal for user searching {% endcomment %}
+<div class="modal fade" id="followingModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark">
+      <div class="modal-header">
+        <h5 class="modal-title text-white" id="ModalLabel">Send a message</h5>
+        <button type="button" class="btn-close btn-light btn" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-header">
+        <span class="text-white fw-bold me-3">To: </span>
+        <input type="text" class="form-control rounded-pill" id="search_input" style="background: #eee;" placeholder="Search...">
+      </div>
+      <div class="modal-body" id="users-container">
+        {% for user in following %}
+        <div class="mb-3 d-flex align-items-center">
+          <img src="{{ user.profile.image.url }}" alt="{{ user }} Profile Pic" class="rounded-circle article-img">
+          <div class="flex-fill d-flex justify-content-between align-items-center">
+          <div class="d-flex flex-column">
+              <span class="fw-bold">
+                  <a href="{% url 'chat:get_chatroom' user.id %}" class=" text-decoration-none">{{user}}</a>
+              </span>
+              <span class="text-white">
+                  {{ user.first_name }} {{ user.last_name }}
+              </span>
+          </div>
+          </div>
+      </div>
+      {% endfor %} 
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock msg_content %}
+{% block scripts %}
+<script type="text/javascript" src="{% static 'blog/scripts.js' %}"></script>
+<script>
+  var postURL = "{% url 'chat:get_users' %}"
+  var usersContainer = document.getElementById('users-container');
+  document.getElementById("search_input").onkeyup = async function(e) {
+    // onkey value
+    var value = e.target.value;
+    // showing the loading spinner
+    usersContainer.innerHTML = `
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-light" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+    `;
+    // getting data
+    var response = await fetch(postURL, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            "X-CSRFToken": getCookie('csrftoken')
+          },
+          body: JSON.stringify({"search_value": value})
+        });
+    var data = await response.json();
+    var elements = ""
+    data.forEach((user) => {
+      elements += `
+        <div class="mb-3 d-flex align-items-center">
+          <img src="${user.picture}" alt="${user.username} Profile Pic" class="rounded-circle article-img">
+          <div class="flex-fill d-flex justify-content-between align-items-center">
+            <div class="d-flex flex-column">
+              <span class="fw-bold">
+                  <a href="${user.chat_url}" class=" text-decoration-none">${user.username}</a>
+              </span>
+              <span class="text-white">
+                  ${user.name}
+              </span>
+            </div>
+          </div>
+        </div>
+      `
+    });
+    usersContainer.innerHTML = elements;
+  };
+</script>
+{% endblock scripts %}
+
+
