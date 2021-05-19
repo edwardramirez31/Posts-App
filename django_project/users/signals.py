@@ -4,8 +4,10 @@ from django.dispatch import receiver
 from .models import Profile
 import os
 from notifications.models import Notification
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
+from django.core.files.storage import default_storage as storage
+
+# from asgiref.sync import async_to_sync
+# from channels.layers import get_channel_layer
 
 @receiver(post_save, sender=User)
 def createProfile(sender, instance, created, **kwargs):
@@ -17,32 +19,26 @@ def createProfile(sender, instance, created, **kwargs):
 def saveProfile(sender, instance, **kwargs):
     instance.profile.save()
 
-#     Now i have an observation: when you delete a profile or a user you don't delete the picture attached to it. So I made a signal for this:
 
 @receiver(post_delete, sender=Profile)
 def delete_profile(sender, instance, **kwargs):
     if instance.image != Profile.image.field.default:
-        os.remove(instance.image.path)
+        storage.delete(instance.image.name)
 
-
-# @receiver(post_save, sender=Profile)
-# def delete_image(sender, **kwargs):
-#     upload_folder_instance = kwargs['instance']
-#     if upload_folder_instance.id:
-#         path = upload_folder_instance.image.path
-#         os.remove(path)
 @receiver(pre_save, sender=Profile)
 def file_update(sender, instance, raw, using, update_fields, **kwargs):
     """
-    Signal used to delete the previous image when the user wants to update the post
+    Signal used to delete the previous image when the user wants to update the profile picture
     """
     if instance.id is None:
         pass
     else:
         # current = instance
         previous = Profile.objects.get(id=instance.id)
-        if not previous.image.path == instance.image.path:
-            os.remove(previous.image.path)
+
+        if not previous.image.name == instance.image.name and previous.image != Profile.image.field.default:
+            storage.delete(previous.image.name)
+
 
 @receiver(m2m_changed, sender=Profile.following.through)
 def follow_update(sender, instance, action, pk_set, ** kwargs):

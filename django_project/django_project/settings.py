@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '7bd#m&y)(*52^x=h%e3q27=!k0(f-@rm_^^y+x4rcmshu-nc-('
+SECRET_KEY = os.environ.get('POST_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'channels',
     'ckeditor',
+    'storages',
     'ckeditor_uploader',
     'chat.apps.ChatConfig',
     'notifications.apps.NotificationsConfig',
@@ -172,3 +173,14 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('USER_EMAIL')
 EMAIL_HOST_PASSWORD = os.environ.get('USER_PASSWORD')
+
+
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+# AWS_QUERYSTRING_AUTH = False
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

@@ -2,7 +2,7 @@ from .models import Post, Comment, Like
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from notifications.models import Notification
-import os
+from django.core.files.storage import default_storage as storage
 
 
 @receiver(pre_save, sender=Post)
@@ -15,8 +15,8 @@ def file_update(sender, instance, raw, using, update_fields,**kwargs):
 
     else:
         previous = Post.objects.get(id=instance.id)
-        if instance.image.path != previous.image.path:
-            os.remove(previous.image.path)
+        if instance.image.name != previous.image.name:
+            storage.delete(previous.image.name)
 
 
 @receiver(post_save, sender=Comment)

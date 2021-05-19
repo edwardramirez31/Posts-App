@@ -57,8 +57,7 @@ def update_profile(request):
             bottom = top + float(request.POST.get('height'))
             coords = (left, top, right, bottom)
             user_form.save()
-            instance = profile_form.save(commit=False)
-            instance.save(coordinates=coords)
+            profile_form.save(coordinates=coords)
             messages.success(request, f'Your profile has been updated.')
             return redirect(reverse('profile', args=[request.user.id]))
     else:

@@ -2,7 +2,7 @@ window.onload = function(){
   var el = document.getElementById("waypoint"); 
   console.log(el)
 // To set the scroll
-  el.scrollTop = 100;
+  el.scrollTop = 600;
 }
 
 // SETTING EMOJI PICKER
